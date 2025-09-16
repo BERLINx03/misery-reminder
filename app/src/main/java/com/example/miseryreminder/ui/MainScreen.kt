@@ -49,10 +49,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
-import com.example.miseryreminder.AlarmSchedular
+import com.example.miseryreminder.alarm.AlarmSchedular
+import com.example.miseryreminder.ui.utils.CancelButton
+import com.example.miseryreminder.ui.utils.CardWrapper
+import com.example.miseryreminder.ui.utils.DailyRepeatSwitch
+import com.example.miseryreminder.ui.utils.ReminderButton
 
 @Composable
-fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long) {
+fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int, applications: Int) {
     val context = LocalContext.current
     var hours by rememberSaveable {
         mutableIntStateOf(0)
@@ -192,13 +196,13 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long) {
                         start = 16.dp, end = 8.dp, bottom = 8.dp
                     ),
                 backgroundColor = marginColor.copy(0.2f),
-                counter = "43",
+                counter = hustledDays.toString(),
                 label = "HUSTLE DAYS"
             )
             CardWrapper(
                 modifier = Modifier.padding(
                     start = 8.dp, end = 16.dp
-                ), backgroundColor = marginColor.copy(0.2f), counter = "3", label = "APPLICATIONS"
+                ), backgroundColor = marginColor.copy(0.2f), counter = "$applications", label = "APPLICATIONS"
             )
         }
 
@@ -265,7 +269,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long) {
             repeat = isRepeatEnabled,
             context = context,
             alarmManager = alarmManager,
-            onAlarmSet = { isAlarmSet = true}
+            onAlarmSet = { isAlarmSet = true }
         )
     }
 }

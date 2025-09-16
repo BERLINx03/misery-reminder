@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.miseryreminder.database.ApplicationEntity
-import com.example.miseryreminder.database.Status
+import com.example.miseryreminder.data.database.ApplicationEntity
+import com.example.miseryreminder.data.database.Status
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

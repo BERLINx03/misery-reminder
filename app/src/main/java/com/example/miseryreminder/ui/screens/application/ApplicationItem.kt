@@ -22,8 +22,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.miseryreminder.database.ApplicationEntity
-import com.example.miseryreminder.database.Status
+import com.example.miseryreminder.data.database.ApplicationEntity
+import com.example.miseryreminder.data.database.Status
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

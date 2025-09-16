@@ -1,31 +1,31 @@
 package com.example.miseryreminder
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.AudioAttributes
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.provider.Settings.Global.DEVICE_NAME
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
-import com.example.miseryreminder.ui.MainScreen
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
+import com.example.miseryreminder.alarm.AlarmSchedular
+import com.example.miseryreminder.data.database.ApplicationDatabase
+import com.example.miseryreminder.data.preferences.PreferencesViewModel
+import com.example.miseryreminder.data.preferences.PreferencesViewModelFactory
+import com.example.miseryreminder.ui.NavigationDrawer
+import com.example.miseryreminder.ui.screens.application.ApplicationViewModel
+import com.example.miseryreminder.ui.screens.application.ApplicationViewModelFactory
+import com.example.miseryreminder.ui.theme.MiseryReminderTheme
 
 class MainActivity : ComponentActivity() {
-    val startDate: LocalDate? = LocalDate.of(2025,6,14)
-    val today: LocalDate? = LocalDate.now()
-    val daysElapsed = ChronoUnit.DAYS.between(startDate, today)
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (!isGranted) {
@@ -56,43 +56,32 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val deviceName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            Settings.Global.getString(contentResolver, DEVICE_NAME) ?: Build.MODEL
-        } else {
-            Build.MODEL
-        }
-
         askNotificationPermission()
-        createChannel()
-        val alarmManager = AlarmSchedular(this)
+        val alarmSchedular = AlarmSchedular(this)
+        val dao = ApplicationDatabase.getInstance(this).applicationDao
+        val applicationViewModel = ViewModelProvider(
+            this,
+            ApplicationViewModelFactory(dao)
+        )[ApplicationViewModel::class.java]
+        val prefsViewModel = ViewModelProvider(
+            this,
+            PreferencesViewModelFactory((application as MiseryApplication).preferences)
+        )[PreferencesViewModel::class.java]
         enableEdgeToEdge()
         setContent {
-            MainScreen(alarmManager, deviceName, daysElapsed)
-        }
-    }
-
-    @SuppressLint("ObsoleteSdkInt")
-    fun createChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Daily reminder of your failure"
-                setSound(
-                    "android.resource://$packageName/${R.raw.ring}".toUri(),
-                    AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build()
+            val startDate = prefsViewModel.startDate.collectAsState().value
+            val today = System.currentTimeMillis()
+            val daysElapsed = (today - startDate) / (1000 * 60 * 60 * 24)
+            MiseryReminderTheme(prefsViewModel.isDarkMode.collectAsState().value) {
+                val navController = rememberNavController()
+                NavigationDrawer(
+                    navController = navController,
+                    applicationViewModel = applicationViewModel,
+                    prefsViewModel = prefsViewModel,
+                    alarmSchedular = alarmSchedular,
+                    daysElapsed = daysElapsed
                 )
-                enableVibration(true)
             }
-
-            val notificationManager =
-                getSystemService(NotificationManager::class.java) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
         }
     }
 }

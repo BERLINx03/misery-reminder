@@ -1,4 +1,4 @@
-package com.example.miseryreminder.database
+package com.example.miseryreminder.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete

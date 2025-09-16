@@ -45,7 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.miseryreminder.AlarmSchedular
+import com.example.miseryreminder.alarm.AlarmSchedular
 import com.example.miseryreminder.R
 
 
@@ -89,9 +89,6 @@ fun ReminderButton(
                         val timeDiff = calendar.timeInMillis - currentTime
                         val hoursUntil = timeDiff / (1000 * 60 * 60)
                         val minutesUntil = (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
-                        val sound = MediaPlayer.create(context, R.raw.ring)
-                        sound.setOnCompletionListener { mp -> mp.release() }
-                        sound.start()
                         showSuccessAnimation = true
                         toast(
                             if (hoursUntil == 0L && minutesUntil == 0L)

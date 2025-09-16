@@ -2,7 +2,7 @@ package com.example.miseryreminder.ui.screens.application
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.miseryreminder.database.ApplicationDao
+import com.example.miseryreminder.data.database.ApplicationDao
 
 class ApplicationViewModelFactory(
     private val applicationDao: ApplicationDao

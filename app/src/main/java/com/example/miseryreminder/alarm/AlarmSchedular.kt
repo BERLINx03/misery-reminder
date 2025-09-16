@@ -1,4 +1,4 @@
-package com.example.miseryreminder
+package com.example.miseryreminder.alarm
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -7,13 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.example.miseryreminder.receiver.ApplicationReceiver
 import java.util.Calendar
 import java.util.Date
 
 const val REQUEST_CODE = 5
 const val DAILY_REPEAT = "daily repeat"
 const val ACTION_DAILY_ALARM = "com.berlin.ACTION_DAILY_ALARM"
-
 const val HOURS = "hours"
 const val MINUTES = "minutes"
 class AlarmSchedular(val context: Context) {
@@ -49,6 +49,18 @@ class AlarmSchedular(val context: Context) {
         )
         alarmManager.cancel(alarmPendingIntent)
 
+        val applicationIntent = Intent(context, ApplicationReceiver::class.java)
+        val applicationPendingIntent = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE,
+            applicationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            alarmTime + 1000 * 10,
+            applicationPendingIntent
+        )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             alarmTime,
