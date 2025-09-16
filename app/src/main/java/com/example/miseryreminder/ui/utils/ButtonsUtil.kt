@@ -57,6 +57,7 @@ fun ReminderButton(
     mins: Int,
     repeat: Boolean,
     alarmManager: AlarmSchedular,
+    isDarkMode: Boolean,
     context: Context,
     onAlarmSet: () -> Unit
 ) {
@@ -116,9 +117,9 @@ fun ReminderButton(
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = color.copy(alpha = .5f),
-                contentColor = Color(0xFF2d3436),
+                contentColor = if (isDarkMode) Color(0xFFECF0F1) else Color(0xFF2d3436),
                 disabledContainerColor = color.copy(alpha = 0.6f),
-                disabledContentColor = Color.White.copy(alpha = 0.7f)
+                disabledContentColor = if (isDarkMode) Color(0xFFB2BEC3) else Color.White.copy(alpha = 0.7f)
             ),
             shape = RoundedCornerShape(16.dp)
         ) {
@@ -190,6 +191,7 @@ fun CancelButton(
     modifier: Modifier = Modifier,
     alarmManager: AlarmSchedular,
     color: Color,
+    isDarkMode: Boolean,
     isAlarmSet: Boolean,
     onAlarmCancelled: () -> Unit
 ) {
@@ -208,10 +210,14 @@ fun CancelButton(
             ),
         enabled = isAlarmSet,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isAlarmSet) color.copy(alpha = 0.2f) else Color(0xFFF8F9FA),
-            contentColor = if (isAlarmSet) Color(0xFF2d3436) else Color(0xFF6C757D),
-            disabledContainerColor = Color(0xFFF5F5F5),
-            disabledContentColor = Color(0xFFBDBDBD)
+            containerColor = if (isAlarmSet) color.copy(alpha = 0.2f) else if (isDarkMode) Color(0xFF1E1E1E) else Color(0xFFF8F9FA),
+            contentColor = if (isAlarmSet) {
+                if (isDarkMode) Color(0xFFECF0F1) else Color(0xFF2d3436)
+            } else {
+                if (isDarkMode) Color(0xFFB2BEC3) else Color(0xFF6C757D)
+            },
+            disabledContainerColor = if (isDarkMode) Color(0xFF2C2C2C) else Color(0xFFF5F5F5),
+            disabledContentColor = if (isDarkMode) Color(0xFF6C757D) else Color(0xFFBDBDBD)
         ),
         shape = RoundedCornerShape(16.dp)
     ) {

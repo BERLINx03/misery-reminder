@@ -1,5 +1,7 @@
 package com.example.miseryreminder.ui
 
+import android.media.MediaPlayer
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,14 +33,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.miseryreminder.R
 import com.example.miseryreminder.alarm.AlarmSchedular
 import com.example.miseryreminder.data.database.ApplicationEntity
 import com.example.miseryreminder.data.database.Status
 import com.example.miseryreminder.data.preferences.PreferencesViewModel
+import com.example.miseryreminder.openGivenProfile
 import com.example.miseryreminder.ui.screens.Screens
 import com.example.miseryreminder.ui.screens.application.ApplicationScreen
 import com.example.miseryreminder.ui.screens.application.ApplicationViewModel
@@ -57,6 +63,8 @@ fun NavigationDrawer(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val isDarkMode = prefsViewModel.isDarkMode.collectAsState().value
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
@@ -129,7 +137,13 @@ fun NavigationDrawer(
                                 contentDescription = null
                             )
                         },
-                        onClick = { },
+                        onClick = {
+                            openGivenProfile(
+                                context,
+                                "https://discord.gg/XZD9xjmbCU",
+                                "com.discord"
+                            )
+                        },
                     )
                     NavigationDrawerItem(
                         label = { Text("About") },
@@ -140,7 +154,13 @@ fun NavigationDrawer(
                                 contentDescription = null
                             )
                         },
-                        onClick = { },
+                        onClick = {
+                            openGivenProfile(
+                                context,
+                                "https://x.com/BERLINx03",
+                                "com.twitter"
+                            )
+                        },
                     )
                     Spacer(Modifier.height(12.dp))
                 }
@@ -151,9 +171,12 @@ fun NavigationDrawer(
         Scaffold(
             topBar = {
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp).size(60.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .height(70.dp)
+                        .background(Color.Transparent),
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
+                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
                 ) {
                     IconButton(onClick = {
                         scope.launch {
@@ -163,27 +186,39 @@ fun NavigationDrawer(
                                 drawerState.close()
                             }
                         }
-                    }){
+                    }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
                 }
-            }
+            },
+
         ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = Screens.Home.route,
-                modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screens.Home.route) {
                     val hustledDays = prefsViewModel.hustleDays.collectAsState().value
                     val applications = prefsViewModel.applications.collectAsState().value
-                    MainScreen(alarmSchedular, daysElapsed, hustledDays, applications)
+                    MainScreen(alarmSchedular, daysElapsed, hustledDays, applications, isDarkMode)
                 }
                 composable(Screens.Applications.route) {
                     val applications = applicationViewModel.applications.collectAsState()
                     ApplicationScreen(
                         applications = applications.value,
+                        isDarkMode = isDarkMode,
+                        paddingValues = innerPadding,
                         onStatusUpdate = { app, status ->
+                            var sound: MediaPlayer? = null
+                            if (status == Status.REJECTED) {
+                                sound = MediaPlayer.create(context, R.raw.womp_womp)
+                            } else if (status == Status.ACCEPTED) {
+                                sound = MediaPlayer.create(context, R.raw.tobi)
+                            }
+                            sound?.start()
+                            sound?.setOnCompletionListener {
+                                it.release()
+                            }
                             applicationViewModel.upsertApplication(app.copy(applicationStatus = status))
                         },
                         onAddApplication = { company ->
@@ -198,7 +233,7 @@ fun NavigationDrawer(
                     )
                 }
                 composable(Screens.Settings.route) {
-                    SettingsScreen(prefsViewModel)
+                    SettingsScreen(prefsViewModel, innerPadding)
                 }
             }
         }

@@ -56,7 +56,7 @@ import com.example.miseryreminder.ui.utils.DailyRepeatSwitch
 import com.example.miseryreminder.ui.utils.ReminderButton
 
 @Composable
-fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int, applications: Int) {
+fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int, applications: Int, isDarkMode: Boolean) {
     val context = LocalContext.current
     var hours by rememberSaveable {
         mutableIntStateOf(0)
@@ -84,29 +84,65 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
         derivedStateOf {
             Brush.sweepGradient(
                 colors = when (category) {
-                    DangerCategory.SAFE_ZONE -> listOf(
-                        Color(0xFF66BB6A), Color(0xFF4CAF50), Color(0xFF388E3C), Color(0xFF66BB6A)
-                    )
+                    DangerCategory.SAFE_ZONE -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFF81C784), Color(0xFF66BB6A), Color(0xFF4CAF50), Color(0xFF81C784)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFF66BB6A), Color(0xFF4CAF50), Color(0xFF388E3C), Color(0xFF66BB6A)
+                        )
+                    }
 
-                    DangerCategory.COMFORTABLE -> listOf(
-                        Color(0xFFA5D6A7), Color(0xFF8BC34A), Color(0xFF689F38), Color(0xFFA5D6A7)
-                    )
+                    DangerCategory.COMFORTABLE -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFF9CCC65), Color(0xFF8BC34A), Color(0xFF7CB342), Color(0xFF9CCC65)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFA5D6A7), Color(0xFF8BC34A), Color(0xFF689F38), Color(0xFFA5D6A7)
+                        )
+                    }
 
-                    DangerCategory.ATTENTION_NEEDED -> listOf(
-                        Color(0xFFFFF176), Color(0xFFFFC107), Color(0xFFF57F17), Color(0xFFFFF176)
-                    )
+                    DangerCategory.ATTENTION_NEEDED -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFFFFD54F), Color(0xFFFFC107), Color(0xFFFF8F00), Color(0xFFFFD54F)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFFFF176), Color(0xFFFFC107), Color(0xFFF57F17), Color(0xFFFFF176)
+                        )
+                    }
 
-                    DangerCategory.ACTION_REQUIRED -> listOf(
-                        Color(0xFFFFAB40), Color(0xFFFF5722), Color(0xFFD84315), Color(0xFFFFAB40)
-                    )
+                    DangerCategory.ACTION_REQUIRED -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFFFFB74D), Color(0xFFFF7043), Color(0xFFFF5722), Color(0xFFFFB74D)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFFFAB40), Color(0xFFFF5722), Color(0xFFD84315), Color(0xFFFFAB40)
+                        )
+                    }
 
-                    DangerCategory.CRITICAL -> listOf(
-                        Color(0xFFFF7043), Color(0xFFF44336), Color(0xFFC62828), Color(0xFFFF7043)
-                    )
+                    DangerCategory.CRITICAL -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFFFF8A65), Color(0xFFFF5722), Color(0xFFE64A19), Color(0xFFFF8A65)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFFF7043), Color(0xFFF44336), Color(0xFFC62828), Color(0xFFFF7043)
+                        )
+                    }
 
-                    DangerCategory.OVERDUE -> listOf(
-                        Color(0xFFE53935), Color(0xFFD32F2F), Color(0xFFB71C1C), Color(0xFFE53935)
-                    )
+                    DangerCategory.OVERDUE -> if (isDarkMode) {
+                        listOf(
+                            Color(0xFFEF5350), Color(0xFFF44336), Color(0xFFD32F2F), Color(0xFFEF5350)
+                        )
+                    } else {
+                        listOf(
+                            Color(0xFFE53935), Color(0xFFD32F2F), Color(0xFFB71C1C), Color(0xFFE53935)
+                        )
+                    }
                 }
             )
         }
@@ -153,7 +189,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
             ) {
                 Text(
                     text = "$daysElapsed",
-                    color = Color(0xFF2d3436),
+                    color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436) ,
                     fontSize = 46.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center,
@@ -167,7 +203,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
                 )
                 Text(
                     text = "DAYS UNEMPLOYED",
-                    color = Color(0xFF2d3436),
+                    color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
                     textAlign = TextAlign.Center,
@@ -197,12 +233,17 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
                     ),
                 backgroundColor = marginColor.copy(0.2f),
                 counter = hustledDays.toString(),
+                isDarkMode = isDarkMode,
                 label = "HUSTLE DAYS"
             )
             CardWrapper(
                 modifier = Modifier.padding(
                     start = 8.dp, end = 16.dp
-                ), backgroundColor = marginColor.copy(0.2f), counter = "$applications", label = "APPLICATIONS"
+                ),
+                backgroundColor = marginColor.copy(0.2f),
+                counter = "$applications",
+                isDarkMode = isDarkMode,
+                label = "APPLICATIONS"
             )
         }
 
@@ -224,7 +265,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
             ) {
                 Text(
                     "⏰ Daily Reminder Time",
-                    color = Color(0xFF636e72),
+                    color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -252,6 +293,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             isEnabled = isRepeatEnabled,
             onToggle = { isRepeatEnabled = it },
+            isDarkMode = isDarkMode,
             color = marginColor
         )
 
@@ -259,6 +301,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             alarmManager,
             marginColor,
+            isDarkMode,
             isAlarmSet = isAlarmSet,
             onAlarmCancelled = { isAlarmSet = false }
         )
@@ -268,6 +311,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
             mins = mins,
             repeat = isRepeatEnabled,
             context = context,
+            isDarkMode = isDarkMode,
             alarmManager = alarmManager,
             onAlarmSet = { isAlarmSet = true }
         )

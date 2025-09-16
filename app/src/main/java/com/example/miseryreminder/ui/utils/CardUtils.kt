@@ -27,6 +27,7 @@ fun CardWrapper(
     modifier: Modifier = Modifier,
     backgroundColor: Color,
     counter: String,
+    isDarkMode: Boolean,
     label: String
 ) {
     Card(
@@ -54,7 +55,7 @@ fun CardWrapper(
             Text(
                 text = counter,
                 modifier = Modifier.padding(8.dp),
-                color = Color(0xFF2d3436),
+                color = if(isDarkMode)Color(0xFFECF0F1) else Color(0xFF2d3436),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
@@ -68,7 +69,7 @@ fun CardWrapper(
             )
             Text(
                 text = label,
-                color = Color(0xFF636e72),
+                color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,

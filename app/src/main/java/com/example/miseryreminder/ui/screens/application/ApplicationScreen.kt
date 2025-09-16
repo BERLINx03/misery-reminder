@@ -25,6 +25,8 @@ import com.example.miseryreminder.ui.utils.AddApplicationDialog
 fun ApplicationScreen(
     modifier: Modifier = Modifier,
     applications: List<ApplicationEntity>,
+    paddingValues: PaddingValues,
+    isDarkMode: Boolean,
     onStatusUpdate: (ApplicationEntity, Status) -> Unit,
     onAddApplication: (String) -> Unit
 ) {
@@ -44,9 +46,9 @@ fun ApplicationScreen(
                 )
             }
         }
-    ) { innerPadding ->
+    ) {
         LazyColumn(
-            modifier = modifier.padding(innerPadding),
+            modifier = modifier.padding(paddingValues),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             items(
@@ -57,6 +59,7 @@ fun ApplicationScreen(
                 ApplicationItem(
                     application = app,
                     onClick = { selectedApplication = app },
+                    isDarkMode = isDarkMode,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
@@ -113,6 +116,8 @@ fun ApplicationScreenPreview() {
             )
         ),
         onStatusUpdate = { _, _ -> },
+        paddingValues = PaddingValues(0.dp),
+        isDarkMode = true,
         onAddApplication = { }
     )
 }

@@ -29,6 +29,7 @@ fun DailyRepeatSwitch(
     isEnabled: Boolean,
     onToggle: (Boolean) -> Unit,
     color: Color,
+    isDarkMode: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -60,7 +61,7 @@ fun DailyRepeatSwitch(
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF2d3436)
+                    color = if (isDarkMode) Color(0xFFECF0F1) else Color(0xFF2d3436)
                 )
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -69,7 +70,7 @@ fun DailyRepeatSwitch(
                 style = TextStyle(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (isEnabled) color else Color(0xFF636e72)
+                    color = if (isEnabled) color else if (isDarkMode) Color(0xFFB2BEC3) else Color(0xFF636e72)
                 )
             )
         }
@@ -81,9 +82,9 @@ fun DailyRepeatSwitch(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = color,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xFFE0E0E0),
+                uncheckedTrackColor = if (isDarkMode) Color(0xFF424242) else Color(0xFFE0E0E0),
                 checkedBorderColor = color,
-                uncheckedBorderColor = Color(0xFFBDBDBD)
+                uncheckedBorderColor = if (isDarkMode) Color(0xFF6C757D) else Color(0xFFBDBDBD)
             ),
             modifier = Modifier.scale(0.9f)
         )

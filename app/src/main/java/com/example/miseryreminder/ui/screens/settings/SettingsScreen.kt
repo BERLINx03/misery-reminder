@@ -3,6 +3,7 @@ package com.example.miseryreminder.ui.screens.settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,9 +57,10 @@ import java.util.Locale
 @Composable
 fun SettingsScreen(
     viewModel: PreferencesViewModel,
+    paddingValues: PaddingValues
 ) {
     val isDarkMode by viewModel.isDarkMode.collectAsState()
-    val hasSound by viewModel.hasSound.collectAsState()
+//    val hasSound by viewModel.hasSound.collectAsState()
     val startDate by viewModel.startDate.collectAsState()
 
     var showDatePicker by remember { mutableStateOf(false) }
@@ -71,7 +73,8 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
@@ -92,26 +95,26 @@ fun SettingsScreen(
                 )
             }
         }
-
-
-
-        SettingsSection(title = "Audio") {
-            SettingsItem(
-                title = "Sound Effects",
-                subtitle = if (hasSound) "Sound effects enabled" else "Sound effects disabled",
-                icon = if (hasSound) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
-                onClick = { viewModel.toggleSound() }
-            ) {
-                Switch(
-                    checked = hasSound,
-                    onCheckedChange = { viewModel.toggleSound() },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                )
-            }
-        }
+//
+//
+//
+//        SettingsSection(title = "Audio") {
+//            SettingsItem(
+//                title = "Sound Effects",
+//                subtitle = if (hasSound) "Sound effects enabled" else "Sound effects disabled",
+//                icon = if (hasSound) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+//                onClick = { viewModel.toggleSound() }
+//            ) {
+//                Switch(
+//                    checked = hasSound,
+//                    onCheckedChange = { viewModel.toggleSound() },
+//                    colors = SwitchDefaults.colors(
+//                        checkedThumbColor = MaterialTheme.colorScheme.primary,
+//                        checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+//                    )
+//                )
+//            }
+//        }
 
 
         SettingsSection(title = "Data") {
