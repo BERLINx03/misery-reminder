@@ -1,4 +1,4 @@
-package com.example.miseryreminder.ui
+package com.example.miseryreminder.ui.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,7 +45,10 @@ fun DailyRepeatSwitch(
                 shape = RoundedCornerShape(18.dp)
             )
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable { onToggle(!isEnabled) }, //{ isRepeatEnabled = it }
+            .clickable(
+                indication = null,
+                interactionSource = null
+            ) { onToggle(!isEnabled) }, //{ isRepeatEnabled = it }
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

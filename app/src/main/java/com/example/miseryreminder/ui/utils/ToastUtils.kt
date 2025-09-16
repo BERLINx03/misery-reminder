@@ -1,4 +1,4 @@
-package com.example.miseryreminder.ui
+package com.example.miseryreminder.ui.utils
 
 import android.content.Context
 import android.widget.Toast

@@ -1,4 +1,4 @@
-package com.example.miseryreminder.ui
+package com.example.miseryreminder.ui.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
