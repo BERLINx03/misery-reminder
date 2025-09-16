@@ -9,15 +9,19 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import java.util.Calendar
 import java.util.Date
-import kotlin.jvm.java
 
 const val REQUEST_CODE = 5
+const val DAILY_REPEAT = "daily repeat"
+const val ACTION_DAILY_ALARM = "com.berlin.ACTION_DAILY_ALARM"
+
+const val HOURS = "hours"
+const val MINUTES = "minutes"
 class AlarmSchedular(val context: Context) {
     val alarmManager = ContextCompat.getSystemService(context, AlarmManager::class.java) as AlarmManager
 
 
     @SuppressLint("MissingPermission")
-    fun setAlarmDaily(hours: Int, minutes: Int, onDone: (Boolean) -> Unit) {
+    fun setAlarmDaily(hours: Int, minutes: Int,repeat: Boolean = false, onDone: (Boolean, Calendar) -> Unit) {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hours)
             set(Calendar.MINUTE, minutes)
@@ -31,22 +35,57 @@ class AlarmSchedular(val context: Context) {
 
         val alarmTime = calendar.timeInMillis
 
-        val alarmIntent = Intent(context, AlarmReceiver::class.java)
+        val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra(DAILY_REPEAT, repeat)
+            putExtra(HOURS, hours)
+            putExtra(MINUTES, minutes)
+            action = ACTION_DAILY_ALARM
+        }
         val alarmPendingIntent = PendingIntent.getBroadcast(
             context,
             REQUEST_CODE,
             alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        alarmManager.cancel(alarmPendingIntent)
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             alarmTime,
             alarmPendingIntent
         )
-        onDone(true)
+        onDone(true, calendar)
 
         // Log for debugging
         Log.d("AlarmScheduler", "Alarm set for: ${Date(alarmTime)}")
+    }
+    fun isAlarmSet(): Boolean {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            action = ACTION_DAILY_ALARM
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        val exists = pendingIntent != null
+        Log.d("AlarmScheduler", "Checking alarm with REQUEST_CODE=$REQUEST_CODE: exists = $exists")
+        return exists
+    }
+
+    fun cancelAlarms(){
+        val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
+            action = ACTION_DAILY_ALARM
+        }
+        val alarmPendingIntent = PendingIntent.getBroadcast(
+            context,
+            REQUEST_CODE,
+            alarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(alarmPendingIntent)
+        Log.d("AlarmScheduler", "Alarm has been cancelled")
+
     }
 }

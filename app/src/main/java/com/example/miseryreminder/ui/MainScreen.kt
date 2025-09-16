@@ -6,9 +6,12 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +22,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,15 +52,22 @@ import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import com.example.miseryreminder.AlarmSchedular
 
 @Composable
-fun MainScreen(alarmManager: AlarmSchedular, deviceName: String, daysElapsed: Long) {
+fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long) {
     val context = LocalContext.current
-    var hours by remember {
+    var hours by rememberSaveable {
         mutableIntStateOf(0)
     }
-    var mins by remember {
+    var mins by rememberSaveable {
         mutableIntStateOf(0)
     }
 
+    var isAlarmSet by remember {
+        mutableStateOf(alarmManager.isAlarmSet())
+    }
+
+    LaunchedEffect(alarmManager) {
+        isAlarmSet = alarmManager.isAlarmSet()
+    }
     val infiniteTransition = rememberInfiniteTransition()
     val rotationAnimation = infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -68,137 +81,191 @@ fun MainScreen(alarmManager: AlarmSchedular, deviceName: String, daysElapsed: Lo
             Brush.sweepGradient(
                 colors = when (category) {
                     DangerCategory.SAFE_ZONE -> listOf(
-                        Color(0xFF66BB6A),
-                        Color(0xFF4CAF50),
-                        Color(0xFF388E3C),
-                        Color(0xFF66BB6A)
+                        Color(0xFF66BB6A), Color(0xFF4CAF50), Color(0xFF388E3C), Color(0xFF66BB6A)
                     )
 
                     DangerCategory.COMFORTABLE -> listOf(
-                        Color(0xFFA5D6A7),
-                        Color(0xFF8BC34A),
-                        Color(0xFF689F38),
-                        Color(0xFFA5D6A7)
+                        Color(0xFFA5D6A7), Color(0xFF8BC34A), Color(0xFF689F38), Color(0xFFA5D6A7)
                     )
 
                     DangerCategory.ATTENTION_NEEDED -> listOf(
-                        Color(0xFFFFF176),
-                        Color(0xFFFFC107),
-                        Color(0xFFF57F17),
-                        Color(0xFFFFF176)
+                        Color(0xFFFFF176), Color(0xFFFFC107), Color(0xFFF57F17), Color(0xFFFFF176)
                     )
 
                     DangerCategory.ACTION_REQUIRED -> listOf(
-                        Color(0xFFFFAB40),
-                        Color(0xFFFF5722),
-                        Color(0xFFD84315),
-                        Color(0xFFFFAB40)
+                        Color(0xFFFFAB40), Color(0xFFFF5722), Color(0xFFD84315), Color(0xFFFFAB40)
                     )
 
                     DangerCategory.CRITICAL -> listOf(
-                        Color(0xFFFF7043),
-                        Color(0xFFF44336),
-                        Color(0xFFC62828),
-                        Color(0xFFFF7043)
+                        Color(0xFFFF7043), Color(0xFFF44336), Color(0xFFC62828), Color(0xFFFF7043)
                     )
 
                     DangerCategory.OVERDUE -> listOf(
-                        Color(0xFFE53935),
-                        Color(0xFFD32F2F),
-                        Color(0xFFB71C1C),
-                        Color(0xFFE53935)
+                        Color(0xFFE53935), Color(0xFFD32F2F), Color(0xFFB71C1C), Color(0xFFE53935)
                     )
                 }
             )
         }
     }
+
+    val marginColor = when (category) {
+        DangerCategory.SAFE_ZONE -> Color(0xFF4CAF50)
+        DangerCategory.COMFORTABLE -> Color(0xFF8BC34A)
+        DangerCategory.ATTENTION_NEEDED -> Color(0xFFFFC107)
+        DangerCategory.ACTION_REQUIRED -> Color(0xFFFF5722)
+        DangerCategory.CRITICAL -> Color(0xFFF44336)
+        DangerCategory.OVERDUE -> Color(0xFFD32F2F)
+    }
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(marginColor.copy(alpha = 0.1f)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Hala ya :$deviceName holder", fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(30.dp))
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth(0.9f)
-                    .height(350.dp)
-                    .drawBehind {
-                        val shadowColor = when (category) {
-                            DangerCategory.SAFE_ZONE -> Color(0xFF4CAF50)
-                            DangerCategory.COMFORTABLE -> Color(0xFF8BC34A)
-                            DangerCategory.ATTENTION_NEEDED -> Color(0xFFFFC107)
-                            DangerCategory.ACTION_REQUIRED -> Color(0xFFFF5722)
-                            DangerCategory.CRITICAL -> Color(0xFFF44336)
-                            DangerCategory.OVERDUE -> Color(0xFFD32F2F)
-                        }
-
-                        drawCircle(
-                            color = shadowColor.copy(alpha = 0.3f),
-                            radius = size.minDimension / 2,
-                            center = center.copy(x = center.x + 8f, y = center.y + 8f),
-                            style = Stroke(68f)
+        Spacer(Modifier.height(16.dp))
+        Box(modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .height(250.dp)
+            .drawBehind {
+                val shadowColor = marginColor
+                drawCircle(
+                    color = marginColor.copy(alpha = .5f), radius = size.minDimension / 2 - 40f
+                )
+                drawCircle(
+                    color = shadowColor.copy(alpha = 0.04f),
+                    radius = size.minDimension / 2 + 30f,
+                    center = center.copy(x = center.x + 1f, y = center.y + 1f),
+                    style = Stroke(78f)
+                )
+                rotate(rotationAnimation.value) {
+                    drawCircle(animatedBrush, style = Stroke(80f))
+                }
+            }
+            .clip(CircleShape), contentAlignment = Alignment.Center) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "$daysElapsed",
+                    color = Color(0xFF2d3436),
+                    fontSize = 46.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            offset = Offset(1f, 1f),
+                            blurRadius = 4f
                         )
-                        rotate(rotationAnimation.value) {
-                            drawCircle(animatedBrush, style = Stroke(80f))
-                        }
-                    }
-                    .clip(CircleShape)
-                    .padding(30.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "${daysElapsed}",
-                color = when (category) {
-                    DangerCategory.SAFE_ZONE -> Color(0xFF4CAF50)
-                    DangerCategory.COMFORTABLE -> Color(0xFF8BC34A)
-                    DangerCategory.ATTENTION_NEEDED -> Color(0xFFFFC107)
-                    DangerCategory.ACTION_REQUIRED -> Color(0xFFFF5722)
-                    DangerCategory.CRITICAL -> Color(0xFFF44336)
-                    DangerCategory.OVERDUE -> Color(0xFFD32F2F)
-                },
-                fontSize = 46.sp,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = Color.Black.copy(alpha = 0.3f),
-                        offset = Offset(1f, 1f),
-                        blurRadius = 4f
                     )
                 )
-            )
+                Text(
+                    text = "DAYS UNEMPLOYED",
+                    color = Color(0xFF2d3436),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.Black.copy(alpha = 0.3f),
+                            offset = Offset(1f, 1f),
+                            blurRadius = 4f
+                        )
+                    )
+                )
+            }
         }
+
         Spacer(Modifier.height(20.dp))
 
-        WheelTimePicker(
-            size = DpSize(200.dp, 120.dp),
-            textStyle = MaterialTheme.typography.bodyLarge,
-            selectorProperties = WheelPickerDefaults.selectorProperties(
-                enabled = true,
-                shape = RoundedCornerShape(15.dp),
-                color = Color(0xFFf1faee).copy(alpha = 0.2f),
-                border = BorderStroke(30.dp, when (category) {
-                    DangerCategory.SAFE_ZONE -> Color(0xFF4CAF50).copy(alpha = 0.2f)
-                    DangerCategory.COMFORTABLE -> Color(0xFF8BC34A).copy(alpha = 0.2f)
-                    DangerCategory.ATTENTION_NEEDED -> Color(0xFFFFC107).copy(alpha = 0.2f)
-                    DangerCategory.ACTION_REQUIRED -> Color(0xFFFF5722).copy(alpha = 0.2f)
-                    DangerCategory.CRITICAL -> Color(0xFFF44336).copy(alpha = 0.2f)
-                    DangerCategory.OVERDUE -> Color(0xFFD32F2F).copy(alpha = 0.2f)
-                })
-            )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
         ) {
-            hours = it.hour
-            mins = it.minute
+            CardWrapper(
+                modifier = Modifier
+                    .fillMaxWidth(.5f)
+                    .padding(
+                        start = 16.dp, end = 8.dp, bottom = 8.dp
+                    ),
+                backgroundColor = marginColor.copy(0.2f),
+                counter = "43",
+                label = "HUSTLE DAYS"
+            )
+            CardWrapper(
+                modifier = Modifier.padding(
+                    start = 8.dp, end = 16.dp
+                ), backgroundColor = marginColor.copy(0.2f), counter = "3", label = "APPLICATIONS"
+            )
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .border(
+                    width = 1.dp,
+                    color = marginColor.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(18.dp)
+                )
+                .clip(RoundedCornerShape(20.dp))
+                .background(marginColor.copy(.2f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "⏰ Daily Reminder Time",
+                    color = Color(0xFF636e72),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                WheelTimePicker(
+                    size = DpSize(200.dp, 120.dp),
+                    textStyle = MaterialTheme.typography.titleLarge,
+                    selectorProperties = WheelPickerDefaults.selectorProperties(
+                        enabled = true,
+                        shape = RoundedCornerShape(15.dp),
+                        color = Color(0xFFf1faee).copy(alpha = 0.2f),
+                        border = BorderStroke(1.dp, Color.White)
+                    ),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    hours = it.hour
+                    mins = it.minute
+                }
+            }
+        }
+
+        var isRepeatEnabled by remember { mutableStateOf(false) }
+        DailyRepeatSwitch(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            isEnabled = isRepeatEnabled,
+            onToggle = { isRepeatEnabled = it },
+            color = marginColor
+        )
+
+        CancelButton(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            alarmManager,
+            marginColor,
+            isAlarmSet = isAlarmSet,
+            onAlarmCancelled = { isAlarmSet = false }
+        )
         ReminderButton(
-            category = category,
+            color = marginColor,
             hours = hours,
             mins = mins,
+            repeat = isRepeatEnabled,
             context = context,
-            alarmManager = alarmManager
+            alarmManager = alarmManager,
+            onAlarmSet = { isAlarmSet = true}
         )
     }
 }

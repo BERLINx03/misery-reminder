@@ -1,7 +1,7 @@
 package com.example.miseryreminder.ui
 
 import android.content.Context
-import android.widget.Toast
+import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
@@ -13,6 +13,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -45,28 +46,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.miseryreminder.AlarmSchedular
+import com.example.miseryreminder.R
 
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ReminderButton(
-    category: DangerCategory,
+    color: Color,
     hours: Int,
     mins: Int,
+    repeat: Boolean,
     alarmManager: AlarmSchedular,
-    context: Context
+    context: Context,
+    onAlarmSet: () -> Unit
 ) {
     var isLoading by remember { mutableStateOf(false) }
     var showSuccessAnimation by remember { mutableStateOf(false) }
-
-    val categoryColor = when (category) {
-        DangerCategory.SAFE_ZONE -> Color(0xFF4CAF50)
-        DangerCategory.COMFORTABLE -> Color(0xFF8BC34A)
-        DangerCategory.ATTENTION_NEEDED -> Color(0xFFFFC107)
-        DangerCategory.ACTION_REQUIRED -> Color(0xFFFF5722)
-        DangerCategory.CRITICAL -> Color(0xFFF44336)
-        DangerCategory.OVERDUE -> Color(0xFFD32F2F)
-    }
 
     val buttonScale by animateFloatAsState(
         targetValue = if (isLoading) 0.95f else 1f,
@@ -87,13 +82,27 @@ fun ReminderButton(
         Button(
             onClick = {
                 isLoading = true
-                alarmManager.setAlarmDaily(hours, mins) { done ->
+                alarmManager.setAlarmDaily(hours, mins, repeat) { done, calendar ->
                     isLoading = false
                     if (done) {
+                        val currentTime = System.currentTimeMillis()
+                        val timeDiff = calendar.timeInMillis - currentTime
+                        val hoursUntil = timeDiff / (1000 * 60 * 60)
+                        val minutesUntil = (timeDiff % (1000 * 60 * 60)) / (1000 * 60)
+                        val sound = MediaPlayer.create(context, R.raw.ring)
+                        sound.setOnCompletionListener { mp -> mp.release() }
+                        sound.start()
                         showSuccessAnimation = true
-                        Toast.makeText(context, "تم ضبط الضمير ✓", Toast.LENGTH_LONG).show()
+                        toast(
+                            if (hoursUntil == 0L && minutesUntil == 0L)
+                                "The alarm has been set for a few seconds from now."
+                            else
+                                "the alarm has been set for $hoursUntil hours and $minutesUntil minutes.",
+                            context
+                        )
+                        onAlarmSet()
                     } else {
-                        Toast.makeText(context, "فشل في ضبط الضمير", Toast.LENGTH_LONG).show()
+                        toast("Something wrong happen, please report it!", context)
                     }
                 }
             },
@@ -104,22 +113,17 @@ fun ReminderButton(
                 .shadow(
                     elevation = if (isLoading) 2.dp else 6.dp,
                     shape = RoundedCornerShape(16.dp),
-                    ambientColor = categoryColor.copy(alpha = 0.3f),
-                    spotColor = categoryColor.copy(alpha = 0.3f)
+                    ambientColor = color.copy(alpha = 0.3f),
+                    spotColor = color.copy(alpha = 0.3f)
                 ),
             enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
-                containerColor = categoryColor,
-                contentColor = Color.White,
-                disabledContainerColor = categoryColor.copy(alpha = 0.6f),
+                containerColor = color.copy(alpha = .5f),
+                contentColor = Color(0xFF2d3436),
+                disabledContainerColor = color.copy(alpha = 0.6f),
                 disabledContentColor = Color.White.copy(alpha = 0.7f)
             ),
-            shape = RoundedCornerShape(16.dp),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 6.dp,
-                pressedElevation = 2.dp,
-                disabledElevation = 0.dp
-            )
+            shape = RoundedCornerShape(16.dp)
         ) {
             AnimatedContent(
                 targetState = isLoading,
@@ -168,11 +172,11 @@ fun ReminderButton(
                             text = "${String.format("%02d", hours)}:${String.format("%02d", mins)}",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 fontWeight = FontWeight.Medium,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color(0xFF2d3436)
                             ),
                             modifier = Modifier
                                 .background(
-                                    Color.White.copy(alpha = 0.2f),
+                                    Color.White.copy(alpha = 0.5f),
                                     RoundedCornerShape(8.dp)
                                 )
                                 .padding(horizontal = 8.dp, vertical = 2.dp)
@@ -181,5 +185,45 @@ fun ReminderButton(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CancelButton(
+    modifier: Modifier = Modifier,
+    alarmManager: AlarmSchedular,
+    color: Color,
+    isAlarmSet: Boolean,
+    onAlarmCancelled: () -> Unit
+) {
+    Button(
+        onClick = {
+            alarmManager.cancelAlarms()
+            onAlarmCancelled()
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .height(56.dp)
+            .border(
+                width = 1.dp,
+                color = color.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(18.dp)
+            ),
+        enabled = isAlarmSet,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isAlarmSet) color.copy(alpha = 0.2f) else Color(0xFFF8F9FA),
+            contentColor = if (isAlarmSet) Color(0xFF2d3436) else Color(0xFF6C757D),
+            disabledContainerColor = Color(0xFFF5F5F5),
+            disabledContentColor = Color(0xFFBDBDBD)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(
+            text = "Cancel any scheduled alarms",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp
+            )
+        )
     }
 }
