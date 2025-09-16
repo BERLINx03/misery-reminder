@@ -22,7 +22,4 @@ interface ApplicationDao {
 
     @Query("SELECT * FROM applications WHERE applicationId = :id")
     suspend fun getApplicationById(id: Int): ApplicationEntity?
-
-    @Query("SELECT * FROM applications WHERE companyName = :companyName")
-    suspend fun getApplicationByName(companyName: String): ApplicationEntity?
 }

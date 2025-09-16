@@ -3,8 +3,7 @@ package com.example.miseryreminder.database
 import androidx.room.TypeConverter
 
 enum class Status {
-    CANCELLED,
-    GHOSTED,
+    INTERVIEWED,
     REJECTED,
     ACCEPTED,
     PENDING
