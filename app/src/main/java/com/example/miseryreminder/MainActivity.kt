@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         applicationViewModel = applicationViewModel,
                         prefsViewModel = prefsViewModel,
                         alarmSchedular = alarmSchedular,
-                        daysElapsed = daysElapsed
+                        daysElapsed = if (isHired) 0 else daysElapsed
                     )
                 }
             }

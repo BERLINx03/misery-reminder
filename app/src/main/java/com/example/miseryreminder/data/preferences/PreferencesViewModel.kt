@@ -26,12 +26,6 @@ class PreferencesViewModel(
         }
 
         viewModelScope.launch {
-            applicationPreferences.hasSound.collect { sound ->
-                _hasSound.value = sound
-            }
-        }
-
-        viewModelScope.launch {
             applicationPreferences.startDate.collect { date ->
                 _startDate.value = date
             }
