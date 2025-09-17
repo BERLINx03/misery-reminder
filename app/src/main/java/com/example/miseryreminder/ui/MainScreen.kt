@@ -163,8 +163,8 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
         modifier = Modifier
             .fillMaxSize()
             .background(marginColor.copy(alpha = 0.1f))
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.Center,
+            .verticalScroll(scrollState).padding(top = 32.dp),
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
 
     ) {

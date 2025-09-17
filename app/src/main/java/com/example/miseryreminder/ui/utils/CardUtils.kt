@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -70,6 +71,7 @@ fun CardWrapper(
             Text(
                 text = label,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
