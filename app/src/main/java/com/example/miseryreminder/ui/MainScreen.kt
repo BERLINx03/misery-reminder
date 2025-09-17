@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -156,12 +158,15 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
         DangerCategory.CRITICAL -> Color(0xFFF44336)
         DangerCategory.OVERDUE -> Color(0xFFD32F2F)
     }
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(marginColor.copy(alpha = 0.1f)),
+            .background(marginColor.copy(alpha = 0.1f))
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         Spacer(Modifier.height(16.dp))
         Box(modifier = Modifier
@@ -203,6 +208,7 @@ fun MainScreen(alarmManager: AlarmSchedular, daysElapsed: Long, hustledDays: Int
                 )
                 Text(
                     text = "DAYS UNEMPLOYED",
+                    maxLines = 1,
                     color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,

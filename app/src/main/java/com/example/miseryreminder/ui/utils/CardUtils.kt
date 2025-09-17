@@ -69,6 +69,7 @@ fun CardWrapper(
             )
             Text(
                 text = label,
+                maxLines = 1,
                 color = if(isDarkMode)Color(0xFFECF0F1)   else Color(0xFF2d3436),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
