@@ -63,24 +63,6 @@ class ApplicationPreferences(
             preferences[PreferenceKeys.HUSTLE_DAYS] ?: 0
         }
 
-    val applications: Flow<Int> = dataStore.data
-        .catch {
-            if (it is IOException) {
-                Log.e("data store", "Error reading preferences.", it)
-                emit(emptyPreferences())
-            } else {
-                throw it
-            }
-        }.map { preferences ->
-            preferences[PreferenceKeys.APPLICATIONS] ?: 0
-        }
-
-    suspend fun saveApplications() {
-        dataStore.edit { preferences ->
-            preferences[PreferenceKeys.APPLICATIONS] = preferences[PreferenceKeys.APPLICATIONS]?.plus(1) ?: 1
-        }
-    }
-
     suspend fun saveHustleDays() {
         dataStore.edit { preferences ->
             preferences[PreferenceKeys.HUSTLE_DAYS] = preferences[PreferenceKeys.HUSTLE_DAYS]?.plus(1) ?: 1

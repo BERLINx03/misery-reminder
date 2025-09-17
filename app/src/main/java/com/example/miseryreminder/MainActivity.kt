@@ -19,7 +19,9 @@ import com.example.miseryreminder.alarm.AlarmSchedular
 import com.example.miseryreminder.data.database.ApplicationDatabase
 import com.example.miseryreminder.data.preferences.PreferencesViewModel
 import com.example.miseryreminder.data.preferences.PreferencesViewModelFactory
+import com.example.miseryreminder.receiver.HIRED
 import com.example.miseryreminder.ui.NavigationDrawer
+import com.example.miseryreminder.ui.celebration.HiredCelebrationScreen
 import com.example.miseryreminder.ui.screens.application.ApplicationViewModel
 import com.example.miseryreminder.ui.screens.application.ApplicationViewModelFactory
 import com.example.miseryreminder.ui.theme.MiseryReminderTheme
@@ -69,18 +71,21 @@ class MainActivity : ComponentActivity() {
         )[PreferencesViewModel::class.java]
         enableEdgeToEdge()
         setContent {
+            val isHired = intent.getBooleanExtra(HIRED, false)
             val startDate = prefsViewModel.startDate.collectAsState().value
             val today = System.currentTimeMillis()
             val daysElapsed = (today - startDate) / (1000 * 60 * 60 * 24)
             MiseryReminderTheme(prefsViewModel.isDarkMode.collectAsState().value) {
                 val navController = rememberNavController()
-                NavigationDrawer(
-                    navController = navController,
-                    applicationViewModel = applicationViewModel,
-                    prefsViewModel = prefsViewModel,
-                    alarmSchedular = alarmSchedular,
-                    daysElapsed = daysElapsed
-                )
+                HiredCelebrationScreen(isHired = isHired) {
+                    NavigationDrawer(
+                        navController = navController,
+                        applicationViewModel = applicationViewModel,
+                        prefsViewModel = prefsViewModel,
+                        alarmSchedular = alarmSchedular,
+                        daysElapsed = daysElapsed
+                    )
+                }
             }
         }
     }

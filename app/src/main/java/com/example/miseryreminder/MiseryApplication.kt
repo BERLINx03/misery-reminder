@@ -1,13 +1,11 @@
 package com.example.miseryreminder
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.net.Uri
-import android.os.Build
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -28,7 +26,7 @@ class MiseryApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         createChannel(CHANNEL1_ID, CHANNEL1_NAME,"Alarm notifications","android.resource://$packageName/${R.raw.ring}".toUri())
-        createChannel(CHANNEL2_ID, CHANNEL2_NAME,"Apply notifications","android.resource://$packageName/${R.raw.screenshot_sound}".toUri())
+        createChannel(CHANNEL2_ID, CHANNEL2_NAME,"Apply notifications","android.resource://$packageName/${R.raw.are_winning_son}".toUri())
         preferences = ApplicationPreferences(dataStore)
     }
     fun createChannel(channelId: String, channelName: String, description: String, sound: Uri? = null) {

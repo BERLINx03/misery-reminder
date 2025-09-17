@@ -13,12 +13,13 @@ import com.example.miseryreminder.alarm.ACTION_NO
 import com.example.miseryreminder.alarm.ACTION_YES
 import com.example.miseryreminder.alarm.AlarmReceiver
 import com.example.miseryreminder.receiver.ApplicationReceiver
+import com.example.miseryreminder.receiver.HIRED
 
 const val CHANNEL1_ID = "alarm_channel"
 const val CHANNEL1_NAME = "alarm_channel_name"
 
-const val CHANNEL2_ID = "apply_channel"
-const val CHANNEL2_NAME = "apply_channel"
+const val CHANNEL2_ID = "are_you_hired_channel"
+const val CHANNEL2_NAME = "hired_channel"
 const val NOTIFICATION_ID = 1
 const val NOTIFICATION2_ID = 2
 fun NotificationManager.sendAlarmNotification(context: Context, title: String, message: String) {
@@ -53,7 +54,7 @@ fun NotificationManager.sendAlarmNotification(context: Context, title: String, m
         context,
         CHANNEL1_ID
     ).apply {
-        setSmallIcon(R.drawable.ic_launcher_foreground)
+        setSmallIcon(R.drawable.ic_launcher_background)
         setContentTitle(title)
         setContentText(message)
         setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -73,14 +74,14 @@ fun NotificationManager.sendAlarmNotification(context: Context, title: String, m
     notify(NOTIFICATION_ID, builder.build())
 }
 
-fun NotificationManager.sendApplicationNotifications(
+fun NotificationManager.sendAreYouHirdSon(
     context: Context,
     title: String,
     message: String
 ) {
     val screenTimeImage = BitmapFactory.decodeResource(
         context.resources,
-        R.drawable.screentime
+        R.drawable.are_winning_son
     )
     val bigPicStyle = NotificationCompat.BigPictureStyle()
         .bigPicture(screenTimeImage)
@@ -92,12 +93,14 @@ fun NotificationManager.sendApplicationNotifications(
         PendingIntent.FLAG_IMMUTABLE
     )
 
-    val yesIntent = Intent(context, ApplicationReceiver::class.java).apply {
+    val yesIntent = Intent(context, MainActivity::class.java).apply {
         action = ACTION_YES
+        putExtra(HIRED, true)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
     }
-    val yesPendingIntent = PendingIntent.getBroadcast(
+    val yesPendingIntent = PendingIntent.getActivity(
         context,
-        2,
+        9,
         yesIntent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
@@ -115,7 +118,7 @@ fun NotificationManager.sendApplicationNotifications(
         context,
         CHANNEL2_ID
     ).apply {
-        setSmallIcon(R.drawable.ic_launcher_foreground)
+        setSmallIcon(R.drawable.ic_launcher_background)
         setContentTitle(title)
         setContentText(message)
         setStyle(bigPicStyle)
@@ -130,7 +133,7 @@ fun NotificationManager.sendApplicationNotifications(
             noPendingIntent
         )
         setLargeIcon(screenTimeImage)
-        setAutoCancel(false)
+        setAutoCancel(true)
         setContentIntent(pendingIntent)
     }
     notify(NOTIFICATION2_ID, builder.build())
