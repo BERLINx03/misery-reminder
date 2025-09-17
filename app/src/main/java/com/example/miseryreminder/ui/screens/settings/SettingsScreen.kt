@@ -181,7 +181,7 @@ fun SettingsScreen(
         SettingsSection(title = "About") {
             SettingsItem(
                 title = "App Version",
-                subtitle = "0.0.2",
+                subtitle = "0.0.6",
                 icon = Icons.Filled.Info,
                 onClick = {  }
             )
