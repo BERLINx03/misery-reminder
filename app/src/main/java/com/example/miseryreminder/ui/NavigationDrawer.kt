@@ -1,6 +1,7 @@
 package com.example.miseryreminder.ui
 
 import android.media.MediaPlayer
+import android.net.http.SslCertificate.saveState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -87,7 +89,13 @@ fun NavigationDrawer(
                         selected = false,
                         icon = { Icon(Icons.Rounded.Home, contentDescription = null) },
                         onClick = {
-                            navController.navigate(Screens.Home.route)
+                            navController.navigate(Screens.Home.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             scope.launch {
                                 drawerState.close()
                             }
@@ -103,7 +111,13 @@ fun NavigationDrawer(
                         },
                         selected = false,
                         onClick = {
-                            navController.navigate(Screens.Applications.route)
+                            navController.navigate(Screens.Applications.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             scope.launch {
                                 drawerState.close()
                             }
@@ -114,7 +128,13 @@ fun NavigationDrawer(
                         selected = false,
                         icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
                         onClick = {
-                            navController.navigate(Screens.Settings.route)
+                            navController.navigate(Screens.Settings.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             scope.launch {
                                 drawerState.close()
                             }
