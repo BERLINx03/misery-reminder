@@ -19,7 +19,7 @@ class ApplicationReceiver: BroadcastReceiver() {
         notificationManager.sendApplicationNotifications(
             context = ctx,
             title = "Did you apply for any jobs today?",
-            message = "Did you apply for any jobs today?"
+            message = "Oh is that you?!"
         )
         when (i.action) {
             ACTION_YES -> {

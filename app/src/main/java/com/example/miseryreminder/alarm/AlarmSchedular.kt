@@ -47,18 +47,20 @@ class AlarmSchedular(val context: Context) {
             alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.cancel(alarmPendingIntent)
-
         val applicationIntent = Intent(context, ApplicationReceiver::class.java)
         val applicationPendingIntent = PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE,
+            REQUEST_CODE + 200,
             applicationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.cancel(alarmPendingIntent)
+        alarmManager.cancel(applicationPendingIntent)
+
+        val random = (50..300).random()
+        alarmManager.set(
             AlarmManager.RTC_WAKEUP,
-            alarmTime + 1000 * 10,
+            alarmTime + 1000 * 60 * random,
             applicationPendingIntent
         )
         alarmManager.setExactAndAllowWhileIdle(
