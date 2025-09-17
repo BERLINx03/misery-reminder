@@ -81,7 +81,7 @@ fun NotificationManager.sendAreYouHirdSon(
 ) {
     val screenTimeImage = BitmapFactory.decodeResource(
         context.resources,
-        R.drawable.are_winning_son
+        R.drawable.are_you
     )
     val bigPicStyle = NotificationCompat.BigPictureStyle()
         .bigPicture(screenTimeImage)
