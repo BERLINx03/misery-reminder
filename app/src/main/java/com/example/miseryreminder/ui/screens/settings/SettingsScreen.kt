@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.miseryreminder.data.preferences.PreferencesViewModel
+import com.example.miseryreminder.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -181,7 +182,7 @@ fun SettingsScreen(
         SettingsSection(title = "About") {
             SettingsItem(
                 title = "App Version",
-                subtitle = "0.0.6",
+                subtitle = BuildConfig.VERSION_NAME,
                 icon = Icons.Filled.Info,
                 onClick = {  }
             )
