@@ -22,9 +22,13 @@ This app is built as a **productivity and accountability tool**, designed to mot
 |-------------|------------------|----------|
 | ![Dark Mode](app/sampledata/0_darkmode.png) | ![Applications](app/sampledata/applications.png) | ![Settings](app/sampledata/settings.png) |
 
-| Dynamic Color Warning | Routes | Confetti |
-|----------------------|---------|----------|
-| ![Dynamic Color Risk](app/sampledata/dynamic_color_for_risk.png) | ![Routes](app/sampledata/routes.png) | ![celebration](app/sampledata/img.png)
+| Dynamic Color Warning                                            | Routes                               | Confetti                               |
+|------------------------------------------------------------------|--------------------------------------|----------------------------------------|
+| ![Dynamic Color Risk](app/sampledata/dynamic_color_for_risk.png) | ![Routes](app/sampledata/routes.png) | ![celebration](app/sampledata/img.png) |
+
+| Hustle Notification                              | Check employment                              |
+|--------------------------------------------------|-----------------------------------------------|
+| ![Hustle Notification](app/sampledata/img_1.png) | ![Check Employment](app/sampledata/img_2.png) |
 
 ## 🤝 Contributing & Feedback
 
